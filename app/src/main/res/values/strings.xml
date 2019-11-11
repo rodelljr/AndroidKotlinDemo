@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Android Kotlin Demo</string>
+    <string name="title">International Space Station Passes</string>
+    <string name="btn_label">Locate</string>
+    <string name="duration_label">Duration in Seconds</string>
+    <string name="risetime_label">Date of Duration</string>
+</resources>
