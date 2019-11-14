@@ -30,7 +30,7 @@ class DemoRecyclerViewAdapter(context: Context, items: ArrayList<ResponseModel>)
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.mDuration.text = mValues.get(position).duration.toString()
-        holder.mTime.text = mValues.get(position).risetime.toString()
+        holder.mTime.text = getDateTime(mValues.get(position).risetime)
     }
 
     override fun getItemCount(): Int {
