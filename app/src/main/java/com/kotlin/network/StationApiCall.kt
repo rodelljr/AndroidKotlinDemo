@@ -1,36 +1,31 @@
 package com.kotlin.network
 
 import com.kotlin.interfaces.GetDataListener
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import okhttp3.*
+import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import java.io.IOException
-import kotlin.coroutines.CoroutineContext
 
+class StationApiCall(url: String, listener: GetDataListener) {
 
-class StationApiCall (url: String, listener: GetDataListener) : CoroutineScope {
+    private val mListener = listener
+    private val mUrl = url
 
-     private val mListener = listener
-     private val mUrl = url
-     lateinit var job: Job
-
-     fun connect() {
-        job = Job()
-        val client = OkHttpClient()
+    suspend fun connect() {
         makeCall(client)
     }
 
-    private fun makeCall(client: OkHttpClient) = launch {
+    private suspend fun makeCall(client: OkHttpClient) {
+        withContext(Dispatchers.IO) {
             val request = Request.Builder().url(mUrl).build()
-            client.newCall(request).execute().use { response ->
-                if (!response.isSuccessful) throw IOException("Unexpected code $response")
-                mListener.onApiReturn(response.body!!.string())
-            }
+            val response = client.newCall(request).execute()
+            if (!response.isSuccessful) throw IOException("Unexpected code $response")
+            mListener.onApiReturn(response.body?.string())
+        }
     }
 
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.IO + job
-
+    companion object {
+        val client = OkHttpClient()
+    }
 }
